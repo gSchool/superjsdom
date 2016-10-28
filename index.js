@@ -1,13 +1,11 @@
 const w3cjs = require('w3cjs')
 const jsdom = require('jsdom')
-const expect = require('chai').expect
 
 const Promise = require("bluebird");
 Promise.promisifyAll(jsdom);
 
 global.createPage = createPage
 global.jsdom = jsdom
-global.expect = expect
 
 function createPage(request) {
 
