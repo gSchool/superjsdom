@@ -1,9 +1,13 @@
 const w3cjs = require('w3cjs')
-const cheerio = require('cheerio')
+const jsdom = require('jsdom')
 const expect = require('chai').expect
 
+//make jsdom keep it's promises
+const Promise = require("bluebird");
+Promise.promisifyAll(jsdom);
+
 global.createPage = createPage
-global.cheerio = cheerio
+global.jsdom = jsdom
 global.expect = expect
 
 function createPage(request) {
@@ -23,7 +27,7 @@ function createPage(request) {
   function visit(path) {
     this.path = path
     return get(path).then(function (html) {
-      return cheerio.load(html)
+      return jsdom.envAsync(html, ["http://code.jquery.com/jquery.js"])
     })
   }
 
@@ -117,7 +121,7 @@ function createPage(request) {
       let path = $form.attr('action')
       return post(path, $form.serializeArray()).then(function (res) {
         if (res.status === 302) return visit(res.headers.location)
-        return cheerio.load(res.text)
+        return jsdom.load(res.text)
       })
     }
   }
