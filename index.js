@@ -2,7 +2,6 @@ const w3cjs = require('w3cjs')
 const jsdom = require('jsdom')
 const expect = require('chai').expect
 
-//make jsdom keep it's promises
 const Promise = require("bluebird");
 Promise.promisifyAll(jsdom);
 
