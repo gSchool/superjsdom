@@ -27,7 +27,7 @@ Include it in your test script, and it will attach itself to the global scope.
     * [.visit(path)](#Page+visit) ⇒ <code>Promise</code>
     * [.validate($)](#Page+validate) ⇒ <code>Promise</code>
     * [.get(path)](#Page+get) ⇒ <code>Promise</code>
-    * [.post(path, controls)](#Page+post) ⇒ <code>type</code>
+    * [.post(path, controls)](#Page+post) ⇒ <code>Promise</code>
     * [.clickLink(text)](#Page+clickLink) ⇒ <code>Promise</code>
     * [.fillIn(text, options)](#Page+fillIn) ⇒ <code>function</code>
     * [.check(text)](#Page+check) ⇒ <code>function</code>
@@ -82,16 +82,16 @@ Page.prototype.get - Sends a GET request to the path and resolves a promise with
 
 <a name="Page+post"></a>
 
-### page.post(path, controls) ⇒ <code>type</code>
+### page.post(path, controls) ⇒ <code>Promise</code>
 Page.prototype.post - Sends a post request with the data provided. This is typically used in conjunction with the clickButton method.
 
 **Kind**: instance method of <code>[Page](#Page)</code>  
-**Returns**: <code>type</code> - Resolves with a request object  
+**Returns**: <code>Promise</code> - Resolves with a request object  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| path | <code>type</code> | The path to send |
-| controls | <code>type</code> | an object formatted as an array of objects controls containing a name and value. jQuery's .serializeArray function will format controls properly. |
+| path | <code>string</code> | The path to send |
+| controls | <code>object</code> | an object formatted as an array of objects controls containing a name and value. jQuery's .serializeArray function will format controls properly. |
 
 <a name="Page+clickLink"></a>
 
@@ -154,6 +154,8 @@ Page.prototype.select - Selects an option from a select box based on the text of
 | --- | --- | --- |
 | text | <code>string</code> | The visible text of the label associated with the select box |
 | options | <code>object</code> | an object to configure the selection -  - a string will be converted to an object with the format: { 'from': str } |
+
+
 
 
 ## Example
