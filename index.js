@@ -106,7 +106,7 @@ class Page {
    */
    clickLink(text) {
     return () => {
-      let $link = this.this.$(`a:contains("${text}")`)
+      let $link = this.$(`a:contains("${text}")`)
       return this.visit($link.attr('href'))
     }
   }

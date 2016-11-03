@@ -1,6 +1,6 @@
 {
   "name": "galvanize-superjsdom",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A small library for writing integration tests with superagent and jsdom",
   "main": "index.js",
   "scripts": {
