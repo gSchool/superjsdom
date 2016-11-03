@@ -39,6 +39,11 @@ Include it in your test script, and it will attach itself to the global scope.
 ### new Page(request)
 Represents a Page.
 
+Requires an instance of an express server wrapped in supertest:
+```
+const server = require('../myApp/app');
+const request = require('supertest')(server);
+```
 
 | Param | Type | Description |
 | --- | --- | --- |
