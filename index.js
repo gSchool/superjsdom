@@ -169,7 +169,7 @@ class Page {
 
       let path = $form.attr('action')
       return this.post(path, $form.serializeArray()).then(() => {
-        if (this.response.status === 302) return visit(this.response.headers.location)
+        if (this.response.status === 302) return this.visit(this.response.headers.location)
         return jsdom.envAsync(this.response.text, ["http://code.jquery.com/jquery.js"]).then((window) => {
           this.window = window;
           this.$ = window.$;
