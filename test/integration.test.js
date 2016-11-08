@@ -6,10 +6,15 @@ const path = require('path')
 
 describe("Page", () => {
 
+  let app
+
+  beforeEach(() => {
+    app = express()
+  })
+
   describe("#visit", () => {
 
     it("visits the given path", () => {
-      const app = express()
       app.get('/', function (req, res) {
         res.send(`Hello World!`)
       })
@@ -28,7 +33,6 @@ describe("Page", () => {
   describe("#clickLink", () => {
 
     it("visits the href of the a with the given text", () => {
-      const app = express()
       app.get('/', (req, res) => res.sendFile('index.html', {root: path.join(__dirname, 'fixtures')}))
       app.get('/about', (req, res) => res.sendFile('about.html', {root: path.join(__dirname, 'fixtures')}))
 
