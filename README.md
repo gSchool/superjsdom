@@ -199,5 +199,11 @@ describe("POST /", () => {
       throw new Error(err);
     });
   });
-
+});
 ```
+
+## Contributing
+
+- Clone this repo
+- Run `yarn` to install dependencies
+- Run `npm test` to run tests

@@ -10,11 +10,10 @@ Promise.promisifyAll(jsdom);
  * @param {express} request - an instance of the app wrapped in supertest
  */
 class Page {
-  constructor(request) {
 
+  constructor(request) {
     this.request = request;
   }
-
 
   /**
    *  visit - get a jsdom instance with jquery returned as a promise
