@@ -28,67 +28,28 @@ class Page {
     return this
   }
 
-  // fillIn(text, options) {
-  //   log("fillIn:register", text)
-  //
-  //   this.promises.push(() => {
-  //     log("fillIn:complete", text)
-  //     if (typeof options === 'string') options = { with: options };
-  //     let $label = this.$(`label:contains("${text}")`)
-  //     let $input = this.$(`input#${$label.attr('for')}`)
-  //     $input.val(options.with)
-  //     if ($input.length == 0) {
-  //       let $input = this.$(`textarea#${$label.attr('for')}`)
-  //       $input.html(options.with)
-  //     }
-  //
-  //     return this
-  //   })
-  //
-  //   return this
-  // }
+  fillIn(text, options) {
+    this.promise = this.promise.then( (obj) => {
+      fillIn(text, options, obj.$)
+      return obj
+    })
+    return this
+  }
 
-  // check(text) {
-  //   log("check:register", text)
-  //
-  //   this.promises.push(() => {
-  //     log("check:resolving", text)
-  //     let $label = this.$(`label:contains("${text}")`)
-  //     let $control
-  //     if ($label.attr('for')) {
-  //       $control = this.$(`input#${$label.attr('for')}`)
-  //     } else {
-  //       $control = $label.find(`input`)
-  //     }
-  //     if (!$control.val()) $control.val('on')
-  //     $control.prop('checked', true).attr('checked', 'checked')
-  //
-  //     return this
-  //   })
-  //
-  //   return this
-  // }
+  check(text) {
+    this.promise = this.promise.then( (obj) => {
+      check(text, obj.$)
+      return obj
+    })
+    return this
+  }
 
-  // clickButton(text) {
-  //   log("clickButton:register", text)
-  //
-  //   this.promises.push(() => {
-  //     log("clickButton:resolve", text)
-  //     let $button = this.$(`input[type=submit][value="${text}"]`)
-  //     if (!$button.length) {
-  //       $button = this.$(`button:contains("${text}")`)
-  //     }
-  //     let $form = $button.closest('form')
-  //
-  //     let path = $form.attr('action')
-  //     return this.post(path, $form.serializeArray()).then(() => {
-  //       if (this.response.status === 302) return this.visit(this.response.headers.location)
-  //       return this.jQueryify(this.response.text)
-  //     })
-  //   })
-  //
-  //   return this
-  // }
+  clickButton(text) {
+    this.promise = this.promise.then( (obj) => {
+      return clickButton(text, obj.$, this.request)
+    })
+    return this
+  }
 
   // select(text, options) {
   //   let $ = this.$
@@ -121,33 +82,39 @@ class Page {
   //   })
   // }
 
-  post(path, controls) {
-    log("post:register", path)
-    return new Promise((resolve, reject) => {
-      let thisRequest = this.request.post(path)
-      thisRequest.type('form')
-
-      controls.forEach((control) => {
-        thisRequest.send(control.name+"="+control.value)
-      })
-
-      thisRequest
-        .end((err, res) => {
-          if (err) reject(err);
-          log("post:resolve", path)
-          this.response = res;
-          resolve(this)
-        })
-    })
-  }
-
 }
 
 function visit(path, request) {
   return get(path, request).then((response) => {
-    return jQueryify(response.text)
+    return jQueryify(response.text).then((obj) => {
+      return Object.assign({}, obj, {response})
+    })
   })
 }
+
+function clickButton(text, $, request) {
+  log("clickButton:resolve", text)
+  let $button = $(`input[type=submit][value="${text}"]`)
+  if (!$button.length) {
+    $button = $(`button:contains("${text}")`)
+  }
+  let $form = $button.closest('form')
+
+  let path = $form.attr('action')
+  return post(path, $form.serializeArray(), request).then((response) => {
+    if (response.status === 302) return visit(response.headers.location)
+    return jQueryify(response.text).then((obj) => {
+      return Object.assign({}, obj, {response})
+    })
+  })
+}
+
+function clickLink($, text, request) {
+  let $link = $(`a:contains("${text}")`)
+  return visit($link.attr('href'), request)
+}
+
+// CORE REQUEST
 
 function get(path, request) {
   log("get:register", path)
@@ -163,6 +130,54 @@ function get(path, request) {
   })
 }
 
+function post(path, controls, request) {
+  log("post:register", path)
+  return new Promise((resolve, reject) => {
+    let thisRequest = request.post(path)
+    thisRequest.type('form')
+
+    controls.forEach((control) => {
+      thisRequest.send(control.name+"="+control.value)
+    })
+
+    thisRequest
+      .end((err, res) => {
+        if (err) reject(err);
+        log("post:resolve", path)
+        resolve(res)
+      })
+  })
+}
+
+// NOT PROMISES
+
+function fillIn(text, options, $) {
+  log("fillIn:complete", text)
+  if (typeof options === 'string') options = { with: options };
+  let $label = $(`label:contains("${text}")`)
+  let $input = $(`input#${$label.attr('for')}`)
+  $input.val(options.with)
+  if ($input.length == 0) {
+    let $input = $(`textarea#${$label.attr('for')}`)
+    $input.html(options.with)
+  }
+}
+
+function check(text, $) {
+  log("check:resolving", text)
+  let $label = $(`label:contains("${text}")`)
+  let $control
+  if ($label.attr('for')) {
+    $control = $(`input#${$label.attr('for')}`)
+  } else {
+    $control = $label.find(`input`)
+  }
+  if (!$control.val()) $control.val('on')
+  $control.prop('checked', true).attr('checked', 'checked')
+}
+
+// UTILITY
+
 function jQueryify(text) {
   log("jquerify:register")
   const window = jsdom.jsdom(text, {  }).defaultView;
@@ -176,11 +191,5 @@ function jQueryify(text) {
     });
   })
 }
-
-function clickLink($, text, request) {
-  let $link = $(`a:contains("${text}")`)
-  return visit($link.attr('href'), request)
-}
-
 
 module.exports = Page;

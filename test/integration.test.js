@@ -27,7 +27,8 @@ describe("Page", () => {
       const request = supertest(app)
 
       return new Page(request).visit("/")
-        .end((page) => {
+        .promise
+        .then((page) => {
           result = page
         })
     })
@@ -50,7 +51,7 @@ describe("Page", () => {
 
   describe("#clickLink", () => {
 
-    it.only("visits the href of the a with the given text", () => {
+    it("visits the href of the a with the given text", () => {
       app.get('/', (req, res) => {
         res.sendFile('index.html', {root: path.join(__dirname, 'fixtures')})
       })
@@ -95,7 +96,8 @@ describe("Page", () => {
         .fillIn('First Name', 'Sue')
         .fillIn('Last Name', 'Sylvester')
         .clickButton('Submit Me')
-        .end((page) => {
+        .promise
+        .then((page) => {
           expect(page.response.body).to.deep.equal({ first_name: 'Sue', last_name: 'Sylvester' })
         })
 
@@ -109,7 +111,8 @@ describe("Page", () => {
         .check('Check it out')
         .check('Has no value')
         .clickButton('Submit Me')
-        .end(function(page){
+        .promise
+        .then(function(page){
           expect(page.response.body).to.deep.equal({
             foobar: 'baz',
             novalue: 'on' ,
