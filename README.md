@@ -15,24 +15,55 @@ npm install galvanize-superjsdom
 
 ## Usage
 
-Include it in your test script, and it will attach itself to the global scope.
+Here's an example of an exercise with some tests that check the DOM for the correct content.
 
-<a name="Page"></a>
+```javascript
+'use strict'
+const expect = require('chai').expect
+const server = require('../app')
+const request = require('supertest')(server)
+const Page = require('galvanize-superjsdom')
+
+describe("POST /", () => {
+  it("can fill in forms", () => {
+    const request = supertest(app)
+    const page = new Page(request)
+
+    return page.visit("/")
+      .clickLink('New Person')
+      .fillIn('First Name', 'Sue')
+      .fillIn('Last Name', 'Sylvester')
+      .check('Check it out')
+      .select('Thirty', {from: 'Age'})
+      .clickButton('Submit Me')
+      .promise
+      .then(function(page){
+
+        // page.$ is a jQuery object representing the document
+        expect(page.$("h1").text()).to.equal("It worked")
+
+        // you can also access
+        //
+        //  - page.window
+        //  - page.response.body
+      })
+  })
+
+});
+```
 
 ## Page
 **Kind**: global class  
 
 * [Page](#Page)
     * [new Page(request)](#new_Page_new)
-    * [.visit(path)](#Page+visit) ⇒ <code>Promise</code>
-    * [.validate($)](#Page+validate) ⇒ <code>Promise</code>
-    * [.get(path)](#Page+get) ⇒ <code>Promise</code>
-    * [.post(path, controls)](#Page+post) ⇒ <code>Promise</code>
-    * [.clickLink(text)](#Page+clickLink) ⇒ <code>Promise</code>
-    * [.fillIn(text, options)](#Page+fillIn) ⇒ <code>function</code>
-    * [.check(text)](#Page+check) ⇒ <code>function</code>
-    * [.clickButton(text)](#Page+clickButton) ⇒ <code>Promise</code>
-    * [.select(text, options)](#Page+select) ⇒ <code>function</code>
+    * [.visit(path)](#Page+visit) ⇒ <code>Page</code>
+    * [.clickLink(text)](#Page+clickLink) ⇒ <code>Page</code>
+    * [.fillIn(text, options)](#Page+fillIn) ⇒ <code>Page</code>
+    * [.check(text)](#Page+check) ⇒ <code>Page</code>
+    * [.clickButton(text)](#Page+clickButton) ⇒ <code>Page</code>
+    * [.select(text, options)](#Page+select) ⇒ <code>Page</code>
+    * [.promise](#Page+promise) ⇒ <code>Promise</code>
 
 <a name="new_Page_new"></a>
 
@@ -161,49 +192,9 @@ Page.prototype.select - Selects an option from a select box based on the text of
 | options | <code>object</code> | an object to configure the selection -  - a string will be converted to an object with the format: { 'from': str } |
 
 
-
-
-## Example
-
-Here's an example of an exercise with some tests that check the DOM for the correct content.
-
-```javascript
-'use strict'
-const expect = require('chai').expect;
-const server = require('../mailMerge/app');
-const request = require('supertest')(server);
-
-describe("POST /", () => {
-  it("When a user fills in the form and submits it, Then the values they filled in the form fields should remain filled-in", (done) => {
-    let page = new Page(request)
-
-    let recipTestVal = "Jean Luc,Picard,jeanluc.picard@federation.gov \r\n James,Riker,james.riker@federation.gov";
-    let subjectTestVal = "Email Activation for #{first} #{last}";
-    let bodyTestVal = "Hello Officer #{last}, your email: #{email} has been activated";
-
-    return page.visit('/')
-    .then(page.validate)
-    .then(page.fillIn('Contacts', recipTestVal))
-    .then(page.fillIn('Subject', subjectTestVal))
-    .then(page.fillIn('Body', bodyTestVal))
-    .then(page.clickButton('Preview'))
-    .then(function ($) {
-
-      expect($('[name=subject]').val()).to.contain(subjectTestVal)
-      expect($('[name=recipients]').html()).to.contain(recipTestVal)
-      expect($('[name=messageBody]').html()).to.contain(bodyTestVal)
-
-      done();
-
-    }).catch(function (err) {
-      throw new Error(err);
-    });
-  });
-});
-```
-
 ## Contributing
 
 - Clone this repo
 - Run `yarn` to install dependencies
 - Run `npm test` to run tests
+- Run `DEBUG=true npm test` to run tests
