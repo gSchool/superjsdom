@@ -4,6 +4,7 @@ const supertest = require('supertest')
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
+const jsdom = require('jsdom')
 
 describe("Page", () => {
 
@@ -61,15 +62,12 @@ describe("Page", () => {
       const request = supertest(app)
       const page = new Page(request)
 
-      const p = page.visit("/")
+      return page.visit('/')
         .clickLink('About Us')
-        .end((page) => {
-          expect(page.$('h1').text()).to.equal(`This is the about page`)
+        .promise
+        .then((obj) => {
+          expect(obj.$('h1').text()).to.equal(`This is the about page`)
         })
-
-      console.log('------')
-
-      return p
 
     })
 
