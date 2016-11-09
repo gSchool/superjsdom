@@ -15,21 +15,10 @@ describe("Page", () => {
 
   describe("#visit", () => {
 
-    it("visits the given path", () => {
-      app.get('/', function (req, res) {
-        res.send(`Hello World!`)
-      })
+    let result
 
-      const request = supertest(app)
-
-      return new Page(request).visit("/")
-        .then((page) => {
-          expect(page.response.text).to.equal(`Hello World!`)
-        })
-
-    })
-
-    it("runs JS on the page", () => {
+    before(() => {
+      app = express()
       app.get('/', function (req, res) {
         res.sendFile('index.html', {root: path.join(__dirname, 'fixtures')})
       })
@@ -38,9 +27,22 @@ describe("Page", () => {
 
       return new Page(request).visit("/")
         .then((page) => {
-          expect(page.$('h2').text()).to.equal(`Added via JavaScript`)
+          result = page
         })
+    })
 
+    it("visits the given path", () => {
+      expect(result.$('h1').text()).to.equal(`This is the home page`)
+    })
+
+    it("runs JS on the page", () => {
+      expect(result.$('h2').text()).to.equal(`Added via JavaScript`)
+    })
+
+    it("exposes useful properties in the final promise", () => {
+      expect(result.window).to.be
+      expect(result.$).to.be
+      expect(result.response).to.be
     })
 
   })
