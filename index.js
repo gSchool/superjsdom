@@ -44,29 +44,20 @@ class Page {
     return this
   }
 
+  select(text, options) {
+    this.promise = this.promise.then( (obj) => {
+      select(text, options, obj.$)
+      return obj
+    })
+    return this
+  }
+
   clickButton(text) {
     this.promise = this.promise.then( (obj) => {
       return clickButton(text, obj.$, this.request)
     })
     return this
   }
-
-  // select(text, options) {
-  //   let $ = this.$
-  //   return () => {
-  //     if (typeof options === 'string') options = {'from' : options};
-  //     let $label = this.$(`label:contains("${options.from}")`)
-  //     let $select
-  //     if ($label.attr('for')) {
-  //       $select = this.$(`select#${$label.attr('for')}`)
-  //     } else {
-  //       $select = $label.find(`select`)
-  //     }
-  //     $select.find('option').removeAttr('selected')
-  //     $select.find(`option:contains(${text})`).attr('selected', 'selected');
-  //     return this
-  //   }
-  // }
 
   // validate() {
   //   return new Promise((resolve, reject) => {
@@ -101,6 +92,7 @@ function clickButton(text, $, request) {
   let $form = $button.closest('form')
 
   let path = $form.attr('action')
+
   return post(path, $form.serializeArray(), request).then((response) => {
     if (response.status === 302) return visit(response.headers.location)
     return jQueryify(response.text).then((obj) => {
@@ -174,6 +166,20 @@ function check(text, $) {
   }
   if (!$control.val()) $control.val('on')
   $control.prop('checked', true).attr('checked', 'checked')
+}
+
+function select(text, options, $) {
+  if (typeof options === 'string') options = {from: options};
+  let $label = $(`label:contains("${options.from}")`)
+  let $select
+  if ($label.attr('for')) {
+    $select = $(`select#${$label.attr('for')}`)
+  } else {
+    $select = $label.find(`select`)
+  }
+  $select.find('option').removeAttr('selected')
+  const $option = $select.find(`option:contains(${text})`)
+  $select.val($option.val())
 }
 
 // UTILITY

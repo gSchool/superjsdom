@@ -98,7 +98,12 @@ describe("Page", () => {
         .clickButton('Submit Me')
         .promise
         .then((page) => {
-          expect(page.response.body).to.deep.equal({ first_name: 'Sue', last_name: 'Sylvester' })
+          expect(page.response.body).to.deep.equal({
+            characteristic: 'Cool',
+            age: '20',
+            first_name: 'Sue',
+            last_name: 'Sylvester'
+          })
         })
 
     })
@@ -114,8 +119,29 @@ describe("Page", () => {
         .promise
         .then(function(page){
           expect(page.response.body).to.deep.equal({
+            characteristic: 'Cool',
+            age: '20',
             foobar: 'baz',
             novalue: 'on' ,
+            first_name: '',
+            last_name: '',
+          })
+        })
+    })
+
+    it("can select from dropdowns with option values, and from those without option values", () => {
+      const request = supertest(app)
+      const page = new Page(request)
+
+      return page.visit("/")
+        .select('Thirty', {from: 'Age'})
+        .select('Awesome', {from: 'Characteristic'})
+        .clickButton('Submit Me')
+        .promise
+        .then(function(page){
+          expect(page.response.body).to.deep.equal({
+            characteristic: 'Awesome',
+            age: '30',
             first_name: '',
             last_name: '',
           })
