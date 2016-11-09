@@ -24,11 +24,7 @@ class Page {
    visit(path) {
     this.path = path
     return this.get(path).then((response) => {
-      return jsdom.envAsync(this.response.text, ["http://code.jquery.com/jquery.js"]).then((window) => {
-        this.window = window;
-        this.$ = window.$;
-        return this
-      })
+      return this.jQueryify(this.response.text)
     })
   }
 
@@ -40,7 +36,6 @@ class Page {
    */
    validate() {
     return new Promise((resolve, reject) => {
-      console.log(this)
       w3cjs.validate({
         input: this.response.text,
         callback: (validationResponse) => {
@@ -169,13 +164,21 @@ class Page {
       let path = $form.attr('action')
       return this.post(path, $form.serializeArray()).then(() => {
         if (this.response.status === 302) return this.visit(this.response.headers.location)
-        return jsdom.envAsync(this.response.text, ["http://code.jquery.com/jquery.js"]).then((window) => {
-          this.window = window;
-          this.$ = window.$;
-          return this;
-        })
+
+        return this.jQueryify(this.response.text)
       })
     }
+  }
+
+  jQueryify() {
+    const window = jsdom.jsdom(this.response.text, {  }).defaultView;
+    return new Promise((resolve, reject) => {
+      jsdom.jQueryify(window, "http://code.jquery.com/jquery.js", () => {
+        this.window = window;
+        this.$ = window.$;
+        resolve(this)
+      });
+    })
   }
 
   /**
