@@ -1,6 +1,6 @@
 {
   "name": "galvanize-superjsdom",
-  "version": "0.3.2",
+  "version": "0.3.4",
   "description": "A small library for writing integration tests with superagent and jsdom",
   "main": "index.js",
   "scripts": {
@@ -10,10 +10,8 @@
   "license": "CC-BY-NC-SA-4.0",
   "repository": "https://github.com/gSchool/superjsdom",
   "dependencies": {
-    "bluebird": "^3.4.6",
     "jsdom": "^9.8.3",
-    "mocha": "^3.1.2",
-    "w3cjs": "^0.3.0"
+    "mocha": "^3.1.2"
   },
   "devDependencies": {
     "body-parser": "^1.15.2",

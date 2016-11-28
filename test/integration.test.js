@@ -26,6 +26,7 @@ describe("Page", () => {
       const request = supertest(app)
 
       return new Page(request).visit("/")
+        .promise
         .then((page) => {
           result = page
         })
@@ -50,16 +51,22 @@ describe("Page", () => {
   describe("#clickLink", () => {
 
     it("visits the href of the a with the given text", () => {
-      app.get('/', (req, res) => res.sendFile('index.html', {root: path.join(__dirname, 'fixtures')}))
-      app.get('/about', (req, res) => res.sendFile('about.html', {root: path.join(__dirname, 'fixtures')}))
+      app.get('/', (req, res) => {
+        res.sendFile('index.html', {root: path.join(__dirname, 'fixtures')})
+      })
+
+      app.get('/about', (req, res) => {
+        res.sendFile('about.html', {root: path.join(__dirname, 'fixtures')})
+      })
 
       const request = supertest(app)
       const page = new Page(request)
 
-      return page.visit("/")
-        .then(page.clickLink('About Us'))
-        .then((page) => {
-          expect(page.$('h1').text()).to.equal(`This is the about page`)
+      return page.visit('/')
+        .clickLink('About Us')
+        .promise
+        .then((obj) => {
+          expect(obj.$('h1').text()).to.equal(`This is the about page`)
         })
 
     })
@@ -85,11 +92,17 @@ describe("Page", () => {
       const page = new Page(request)
 
       return page.visit("/")
-        .then(page.fillIn('First Name', 'Sue'))
-        .then(page.fillIn('Last Name', 'Sylvester'))
-        .then(page.clickButton('Submit Me'))
+        .fillIn('First Name', 'Sue')
+        .fillIn('Last Name', 'Sylvester')
+        .clickButton('Submit Me')
+        .promise
         .then((page) => {
-          expect(page.response.body).to.deep.equal({ first_name: 'Sue', last_name: 'Sylvester' })
+          expect(page.response.body).to.deep.equal({
+            characteristic: 'Cool',
+            age: '20',
+            first_name: 'Sue',
+            last_name: 'Sylvester'
+          })
         })
 
     })
@@ -99,18 +112,39 @@ describe("Page", () => {
       const page = new Page(request)
 
       return page.visit("/")
-        .then(page.check('Check it out'))
-        .then(page.check('Has no value'))
-        .then(page.clickButton('Submit Me'))
-        .then((page) => {
+        .check('Check it out')
+        .check('Has no value')
+        .clickButton('Submit Me')
+        .promise
+        .then(function(page){
           expect(page.response.body).to.deep.equal({
+            characteristic: 'Cool',
+            age: '20',
             foobar: 'baz',
             novalue: 'on' ,
             first_name: '',
             last_name: '',
           })
         })
+    })
 
+    it("can select from dropdowns with option values, and from those without option values", () => {
+      const request = supertest(app)
+      const page = new Page(request)
+
+      return page.visit("/")
+        .select('Thirty', {from: 'Age'})
+        .select('Awesome', {from: 'Characteristic'})
+        .clickButton('Submit Me')
+        .promise
+        .then(function(page){
+          expect(page.response.body).to.deep.equal({
+            characteristic: 'Awesome',
+            age: '30',
+            first_name: '',
+            last_name: '',
+          })
+        })
     })
 
   })
