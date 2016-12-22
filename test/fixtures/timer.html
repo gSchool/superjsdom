@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Page 4</title>
+  </head>
+  <body>
+      <h1>This is a page where time matters</h1>
+
+      <h2 id='currentTime'>(it's a timer page)</h2>
+
+      <script type="text/javascript">
+        var currentTime = 0;
+        let newTimer = setInterval(function () {
+          currentTime++;
+          document.getElementById('currentTime').innerHTML = currentTime;
+        }, 100);
+      </script>
+  </body>
+</html>

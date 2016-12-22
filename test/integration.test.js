@@ -149,4 +149,42 @@ describe("Page", () => {
 
   })
 
+  describe("waiting for time", function () {
+    this.timeout(5000);
+    beforeEach(() => {
+      app.use(bodyParser.urlencoded({extended: false}))
+
+      app.get('/', (req, res) => {
+        res.sendFile('timer.html', {root: path.join(__dirname, 'fixtures')})
+      })
+
+    })
+
+    it("can wait for some time to go by before firing a promise", () => {
+      const request = supertest(app)
+      const page = new Page(request)
+
+      return page.visit("/")
+        .wait(3000)
+        .promise
+        .then(function(page){
+          expect(page.$('#currentTime')).to.not.eq("(it's a timer page)");
+        })
+
+    })
+
+    it("runs after the specified number of milliseconds-ish", () => {
+      // ish?
+      // Due to how javascript's event loop works, it would be difficult to both specify or test accuracy down to the millisecond
+      // We should be able to test within 100 milliseconds fairly easily.
+      const request = supertest(app)
+      const page = new Page(request)
+      return page.visit("/")
+        .wait(1000)
+        .promise
+        .then(function(page){
+          expect(parseInt(page.$('#currentTime').text())).to.be.at.least(5);
+        })
+    })
+  })
 })
