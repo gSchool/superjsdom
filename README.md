@@ -63,6 +63,7 @@ describe("POST /", () => {
     * [.check(text)](#Page+check) ⇒ <code>Page</code>
     * [.clickButton(text)](#Page+clickButton) ⇒ <code>Page</code>
     * [.select(text, options)](#Page+select) ⇒ <code>Page</code>
+    * [.wait(timeInMilliseconds)](#Page+wait) ⇒ <code>Page</code>
     * [.promise](#Page+promise) ⇒ <code>Promise</code>
 
 <a name="new_Page_new"></a>
@@ -76,8 +77,8 @@ const server = require('../myApp/app');
 const request = require('supertest')(server);
 ```
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param   | Type                 | Description                                 |
+|:--------|:---------------------|:--------------------------------------------|
 | request | <code>express</code> | an instance of the app wrapped in supertest |
 
 <a name="Page+visit"></a>
@@ -88,9 +89,9 @@ Page.prototype.visit - get a jsdom instance with jquery returned as a promise
 **Kind**: instance method of <code>[Page](#Page)</code>  
 **Returns**: <code>Promise</code> - a promise containing a jsdom object  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| path | <code>string</code> | the relative path |
+| Param | Type                | Description       |
+|:------|:--------------------|:------------------|
+| path  | <code>string</code> | the relative path |
 
 <a name="Page+validate"></a>
 
@@ -100,9 +101,9 @@ Page.prototype.validate - A promise that validates the page against w3c standard
 **Kind**: instance method of <code>[Page](#Page)</code>  
 **Returns**: <code>Promise</code> - resolves the promise with the jsdom instance if there are no errors found, otherwise rejects with an object containing the errors  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| $ | <code>jsdom</code> | an instance of jsdom |
+| Param | Type               | Description          |
+|:------|:-------------------|:---------------------|
+| $     | <code>jsdom</code> | an instance of jsdom |
 
 <a name="Page+get"></a>
 
@@ -112,9 +113,9 @@ Page.prototype.get - Sends a GET request to the path and resolves a promise with
 **Kind**: instance method of <code>[Page](#Page)</code>  
 **Returns**: <code>Promise</code> - resolves the promise with the response object, otherwise rejects it with an error  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| path | <code>string</code> | the path |
+| Param | Type                | Description |
+|:------|:--------------------|:------------|
+| path  | <code>string</code> | the path    |
 
 <a name="Page+post"></a>
 
@@ -124,9 +125,9 @@ Page.prototype.post - Sends a post request with the data provided. This is typic
 **Kind**: instance method of <code>[Page](#Page)</code>  
 **Returns**: <code>Promise</code> - Resolves with a request object  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| path | <code>string</code> | The path to send |
+| Param    | Type                | Description                                                                                                                                       |
+|:---------|:--------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------|
+| path     | <code>string</code> | The path to send                                                                                                                                  |
 | controls | <code>object</code> | an object formatted as an array of objects controls containing a name and value. jQuery's .serializeArray function will format controls properly. |
 
 <a name="Page+clickLink"></a>
@@ -137,9 +138,9 @@ Page.prototype.clickLink - A thenable that visits a link by loading the href got
 **Kind**: instance method of <code>[Page](#Page)</code>  
 **Returns**: <code>Promise</code> - Returns the resolve or reject value of the promise returned by the visit method  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| text | <code>string</code> | The text of the link to be clicked |
+| Param | Type                | Description                        |
+|:------|:--------------------|:-----------------------------------|
+| text  | <code>string</code> | The text of the link to be clicked |
 
 <a name="Page+fillIn"></a>
 
@@ -149,9 +150,9 @@ Page.prototype.fillIn - Fills in an input or textarea that is attached to a labe
 **Kind**: instance method of <code>[Page](#Page)</code>  
 **Returns**: <code>function</code> - returns a function usable in a promise chain  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| text | <code>string</code> | the visible content of the label attached to the input via a `for` |
+| Param   | Type                | Description                                                                            |
+|:--------|:--------------------|:---------------------------------------------------------------------------------------|
+| text    | <code>string</code> | the visible content of the label attached to the input via a `for`                     |
 | options | <code>object</code> | the content - a string will be converted to an object with the format: { 'with': str } |
 
 <a name="Page+check"></a>
@@ -162,9 +163,9 @@ Page.prototype.check - Checks a checkbox given the text of the checkbox
 **Kind**: instance method of <code>[Page](#Page)</code>  
 **Returns**: <code>function</code> - A function usable in a promise chain  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| text | <code>string</code> | The visible content of the label associated with the checkbox |
+| Param | Type                | Description                                                   |
+|:------|:--------------------|:--------------------------------------------------------------|
+| text  | <code>string</code> | The visible content of the label associated with the checkbox |
 
 <a name="Page+clickButton"></a>
 
@@ -174,9 +175,9 @@ Page.prototype.clickButton - Submits a form by gathering form values and creatin
 **Kind**: instance method of <code>[Page](#Page)</code>  
 **Returns**: <code>Promise</code> - Returns a promise from the Post method  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| text | <code>string</code> | The visible text of the submit button |
+| Param | Type                | Description                           |
+|:------|:--------------------|:--------------------------------------|
+| text  | <code>string</code> | The visible text of the submit button |
 
 <a name="Page+select"></a>
 
@@ -186,11 +187,24 @@ Page.prototype.select - Selects an option from a select box based on the text of
 **Kind**: instance method of <code>[Page](#Page)</code>  
 **Returns**: <code>function</code> - a function usable in a promise chain  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| text | <code>string</code> | The visible text of the label associated with the select box |
+| Param   | Type                | Description                                                                                                        |
+|:--------|:--------------------|:-------------------------------------------------------------------------------------------------------------------|
+| text    | <code>string</code> | The visible text of the label associated with the select box                                                       |
 | options | <code>object</code> | an object to configure the selection -  - a string will be converted to an object with the format: { 'from': str } |
 
+
+### page.wait(timeInMilliseconds) ⇒ <code>function</code>
+Page.prototype.time - waits for roughly the amount of milliseconds to pass before resolving the next promise
+
+It's important to note that the time the promise actually executes after may be a bit longer than the amount of time specified, due to javascript's event loop not actually interrupting currently executing code. For instance, this method won't interrupt an infinite loop.
+
+**Kind**: instance method of <code>[Page](#Page)</code>  
+**Returns**: <code>function</code> - a function usable in a promise chain  
+
+| Param   | Type                | Description                                                                                                        |
+|:--------|:--------------------|:-------------------------------------------------------------------------------------------------------------------|
+| text    | <code>string</code> | The visible text of the label associated with the select box                                                       |
+| options | <code>object</code> | an object to configure the selection -  - a string will be converted to an object with the format: { 'from': str } |
 
 ## Contributing
 
