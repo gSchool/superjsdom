@@ -65,6 +65,7 @@ describe("POST /", () => {
     * [.check(text)](#Page+check) ⇒ <code>Page</code>
     * [.clickButton(text)](#Page+clickButton) ⇒ <code>Page</code>
     * [.select(text, options)](#Page+select) ⇒ <code>Page</code>
+    * [.wait(time)](#Page+wait) ⇒ <code>Page</code>
     * [.promise](#Page+promise) ⇒ <code>Promise</code>
 
 <a name="new_Page_new"></a>
@@ -193,6 +194,19 @@ Page.prototype.select - Selects an option from a select box based on the text of
 | text    | <code>string</code> | The visible text of the label associated with the select box                                                       |
 | options | <code>object</code> | an object to configure the selection -  - a string will be converted to an object with the format: { 'from': str } |
 
+
+### page.wait(time) ⇒ <code>function</code>
+Page.prototype.time - waits for roughly the amount of milliseconds to pass before resolving the next promise
+
+It's important to note that the time the promise actually executes after may be a bit longer than the amount of time specified, due to javascript's event loop not actually interrupting currently executing code. For instance, this method won't interrupt an infinite loop.
+
+**Kind**: instance method of <code>[Page](#Page)</code>  
+**Returns**: <code>function</code> - a function usable in a promise chain  
+
+| Param   | Type                | Description                                                                                                        |
+|:--------|:--------------------|:-------------------------------------------------------------------------------------------------------------------|
+| text    | <code>string</code> | The visible text of the label associated with the select box                                                       |
+| options | <code>object</code> | an object to configure the selection -  - a string will be converted to an object with the format: { 'from': str } |
 
 ## Contributing
 
